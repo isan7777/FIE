@@ -1,0 +1,32 @@
+# Frontier Intelligence Engine (FIE) Global Configuration
+
+system:
+  name: "Frontier Intelligence Engine"
+  version: "1.0.0"
+  environment: "production"
+  default_locale: "id" # id / en
+  fallback_model_profile: "medium"
+
+memory:
+  backend: "sqlite"
+  db_path: "fie_memory.db"
+  max_history_turns: 20
+  summary_threshold_tokens: 4000
+  enable_auto_vacuum: true
+
+orchestration:
+  max_agent_cycles: 5
+  max_self_correction_attempts: 2
+  timeout_per_step_seconds: 60
+  circuit_breaker_enabled: true
+
+verification:
+  require_syntax_check: true
+  fail_closed_on_security_violation: true
+  auto_test_execution: true
+
+logging:
+  level: "INFO" # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+  log_to_file: false
+  log_file_path: "fie_engine.log"

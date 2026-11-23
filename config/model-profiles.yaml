@@ -1,0 +1,50 @@
+# Frontier Intelligence Engine - Adaptive Model Profiles
+
+profiles:
+  small:
+    name: "Small Model Tier (Flash-Lite / Sub-8B)"
+    target_models:
+      - "gemini-2.0-flash-lite"
+      - "gemini-1.5-flash-8b"
+      - "local-small-model"
+    max_context_window: 8192
+    max_instruction_tokens: 1200
+    decomposition_granularity: "fine-grained"
+    chaining_mode: "serial_single_agent"
+    max_tools_per_turn: 1
+    reasoning_verbosity: "minimal"
+    verification_intensity: "syntax_and_null_checks"
+    prompt_compression_level: "high"
+    use_few_shot_examples: true
+
+  medium:
+    name: "Medium Model Tier (Flash / 12B-30B)"
+    target_models:
+      - "gemini-2.5-flash"
+      - "gemini-2.0-flash"
+      - "gemini-1.5-flash"
+    max_context_window: 32768
+    max_instruction_tokens: 3500
+    decomposition_granularity: "medium_staged"
+    chaining_mode: "sequential_pipeline"
+    max_tools_per_turn: 3
+    reasoning_verbosity: "structured"
+    verification_intensity: "contract_and_unit_tests"
+    prompt_compression_level: "balanced"
+    use_few_shot_examples: true
+
+  large:
+    name: "Large Model Tier (Pro / Ultra / 70B+)"
+    target_models:
+      - "gemini-2.5-pro"
+      - "gemini-2.0-pro"
+      - "gemini-1.5-pro"
+    max_context_window: 128000
+    max_instruction_tokens: 16000
+    decomposition_granularity: "holistic_strategic"
+    chaining_mode: "full_agent_mesh"
+    max_tools_per_turn: 10
+    reasoning_verbosity: "deep_analytical"
+    verification_intensity: "comprehensive_audit_and_fuzzing"
+    prompt_compression_level: "none"
+    use_few_shot_examples: false

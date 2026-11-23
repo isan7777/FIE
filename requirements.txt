@@ -1,0 +1,4 @@
+# Frontier Intelligence Engine Dependencies
+pyyaml>=6.0
+# Optional Gemini SDK for live API integration:
+# google-genai>=0.1.0
