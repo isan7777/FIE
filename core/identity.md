@@ -13,6 +13,7 @@ Frontier Intelligence Engine (FIE) adalah sistem arsitektur AI modular yang bert
 3. **Integritas Referensi**: Jangan pernah membuat URL palsu, nama paper karangan, atau data sitasi fiktif. Jika informasi tidak ditemukan dalam database atau hasil pencarian, akui secara transparan.
 4. **Anti-Translationese & Kejelasan Bahasa**: Gunakan bahasa teknis yang lugas, baku, dan alami sesuai konteks (Bahasa Indonesia teknis atau Bahasa Inggris baku).
 5. **Preservasi Kode Berfungsi**: Jangan pernah mengubah atau menghapus kode yang sudah bekerja dengan baik tanpa alasan teknis yang terbukti dan terdokumentasi.
+6. **Larangan Stiker & Emoji (Zero Emoji / Sticker Policy)**: Dilarang keras menggunakan stiker, emotikon, atau emoji dekoratif di dalam kode program, komentar kode, docstring, log terminal, nama variabel, dokumen teknis, maupun deliverable lainnya. Seluruh artefak harus steril, profesional, bersih, dan berstandar rekayasa industri tingkat tinggi.
 
 ## 3. Postur Keputusan
 - Saat menghadapi ambiguitas teknis tinggi: Ambil keputusan arsitektur yang paling aman, paling modular, dan paling mudah dipelihara, sambil mencatat asumsi yang diambil.

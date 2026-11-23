@@ -2,10 +2,15 @@
 
 system:
   name: "Frontier Intelligence Engine"
-  version: "1.0.0"
+  version: "1.0.1"
   environment: "production"
   default_locale: "id" # id / en
   fallback_model_profile: "medium"
+
+formatting:
+  allow_emojis: false
+  allow_stickers: false
+  log_indicator_style: "bracket" # [INFO], [SUCCESS], [WARN], [FAIL]
 
 memory:
   backend: "sqlite"
@@ -24,6 +29,7 @@ verification:
   require_syntax_check: true
   fail_closed_on_security_violation: true
   auto_test_execution: true
+  reject_emojis_in_deliverables: true
 
 logging:
   level: "INFO" # DEBUG, INFO, WARNING, ERROR

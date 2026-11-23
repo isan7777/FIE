@@ -1,13 +1,13 @@
 ---
 name: frontier-intelligence-engine
 description: Universal adaptive multi-agent AI framework for high-precision software engineering, research, and complex problem-solving across all Gemini tiers.
-version: 1.0.0
+version: 1.0.1
 author: FIE Core Architecture Team
 ---
 
 # FRONTIER INTELLIGENCE ENGINE (FIE) CORE SKILL
 
-Frontier Intelligence Engine (FIE) adalah sistem modulasi inteligensi tingkat lanjut yang mengorkestrasi kapabilitas model AI (Google Gemini Flash-Lite, Flash, Pro, dan AI Studio) untuk menghasilkan deliverable teknis siap pakai.
+Frontier Intelligence Engine (FIE) adalah sistem modulasi inteligensi tingkat lanjut yang mengorkestrasi kapabilitas model AI (Google Gemini Flash-Lite, Flash, Pro, dan AI Studio) untuk menghasilkan deliverable teknis siap pakai berstandar industri.
 
 ## 1. Operasi Inti
 FIE beroperasi melalui empat tahap deterministik:
@@ -16,12 +16,13 @@ FIE beroperasi melalui empat tahap deterministik:
 3. **Pendelegasian Agen Spesialis**: Memuat instruksi peran terkait dari direktori `agents/`.
 4. **Verifikasi & Evaluasi Mandiri**: Menguji validitas output sebelum diserahkan kepada pengguna.
 
-## 2. Inisialisasi Dinamis
+## 2. Inisialisasi Dinamis & Aturan Mutlak
 Ketika menerima permintaan:
-- Baca file `core/identity.md` untuk komitmen persona dan integritas data.
+- Baca file `core/identity.md` untuk komitmen persona, integritas data, dan **Zero Emoji / Sticker Policy**.
 - Periksa `config/model-profiles.yaml` untuk batasan parameter model aktif.
 - Pilih alur kerja yang relevan dari `workflows/`.
 - Validasi hasil akhir menggunakan kriteria dalam `intelligence/verification.md`.
+- Pastikan kode dan dokumen bebas dari stiker, emotikon, atau emoji dekoratif.
 
 ## 3. Kompatibilitas Model
 - **Small Model (Flash-Lite / Sub-8B)**: Gunakan instruksi ringkas dari modul, minimalkan token reasoning, fokus pada penyelesaian langkah tunggal terstruktur.

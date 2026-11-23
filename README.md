@@ -4,7 +4,7 @@ Frontier Intelligence Engine (FIE) adalah framework orkestrasi kecerdasan buatan
 
 ---
 
-## 🌟 Pilar Utama FIE
+## 1. Pilar Utama FIE
 
 1. **Adaptive Intelligence & Model Profiles**
    - Penyesuaian otomatis panjang instruksi, kedalaman dekomposisi langkah, dan alokasi token untuk profil `small` (misal: Gemini Flash-Lite), `medium` (misal: Gemini Flash), dan `large` (misal: Gemini Pro).
@@ -18,7 +18,8 @@ Frontier Intelligence Engine (FIE) adalah framework orkestrasi kecerdasan buatan
    - SQLite external memory subsystem dengan full-text indexing, session summaries, project key-value facts, dan task tracking historis.
 
 4. **Self-Verification & Quality Engine**
-   - Validasi sintaks, kelengkapan kode, audit keamanan, pemeriksaan fakta, dan pelaporan status transparan (`VERIFIED`, `SYNTAX_PASSED`, `UNTESTED`, `NEEDS_REVIEW`).
+   - Validasi sintaks AST, kelengkapan kode, audit keamanan, pemeriksaan fakta, serta penegakan Zero Emoji/Sticker Policy.
+   - Pelaporan status transparan (`VERIFIED`, `SYNTAX_PASSED`, `UNTESTED`, `NEEDS_REVIEW`).
 
 5. **Tool Integration & Grounding Ready**
    - Dukungan function calling terstandarisasi, Google Search grounding, sandboxed local code execution, dan file management yang aman.
@@ -28,7 +29,7 @@ Frontier Intelligence Engine (FIE) adalah framework orkestrasi kecerdasan buatan
 
 ---
 
-## 📁 Struktur Arsitektur
+## 2. Struktur Arsitektur
 
 ```text
 FRONTIER-INTELLIGENCE-ENGINE/
@@ -55,7 +56,7 @@ FRONTIER-INTELLIGENCE-ENGINE/
 
 ---
 
-## 🚀 Memulai Cepat (Quick Start)
+## 3. Memulai Cepat (Quick Start)
 
 ### 1. Prasyarat
 - Python 3.10+
@@ -84,8 +85,9 @@ python -m unittest discover -s tests
 
 ---
 
-## 🛡️ Prinsip Integritas FIE
+## 4. Prinsip Integritas FIE
 - **Fakta Nyata, Tanpa Halusinasi**: Tidak pernah memalsukan sitasi, URL, atau hasil eksekusi.
 - **Transparansi Pengujian**: Jika kode belum diuji dalam runtime sungguhan, diberi label `UNTESTED`.
 - **Eksekusi Presisi**: Mengutamakan file siap produksi utuh tanpa placeholder tersembunyi.
+- **Zero Emoji / Sticker Invariant**: Bebas dari polusi emoji dekoratif di dalam kode, komentar, log, maupun dokumen teknis.
 - **Model-Agnostic**: Bekerja optimal dari Google AI Studio, Gemini API, hingga CLI mandiri.

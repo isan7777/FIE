@@ -79,14 +79,14 @@ def handle_benchmark(args: argparse.Namespace) -> None:
         res = runner.run_coding_suite()
         print(f"\nCoding Suite Score: {res['correctness_score']}% ({res['passed_cases']}/{res['total_cases']} Passed)")
         for d in res["details"]:
-            status_symbol = "✓" if d["passed"] else "✗"
-            print(f"  [{status_symbol}] {d['id']}: {d['name']} ({d['status']})")
+            status_symbol = "[PASS]" if d["passed"] else "[FAIL]"
+            print(f"  {status_symbol} {d['id']}: {d['name']} ({d['status']})")
     elif args.category == "memory":
         res = runner.run_memory_adherence_suite()
         print(f"\nMemory Suite Score: {res['correctness_score']}% ({res['passed_cases']}/{res['total_cases']} Passed)")
         for d in res["details"]:
-            status_symbol = "✓" if d["passed"] else "✗"
-            print(f"  [{status_symbol}] {d['test']}")
+            status_symbol = "[PASS]" if d["passed"] else "[FAIL]"
+            print(f"  {status_symbol} {d['test']}")
     else:
         full = runner.run_full_benchmark()
         print("\n" + "=" * 60)
@@ -103,8 +103,8 @@ def handle_benchmark(args: argparse.Namespace) -> None:
             print(f"\nSuite: {suite['category']} -> {suite['correctness_score']}% Passed ({suite['passed_cases']}/{suite['total_cases']})")
             for d in suite["details"]:
                 name = d.get("name") or d.get("test", "test")
-                symbol = "✓" if d["passed"] else "✗"
-                print(f"   [{symbol}] {name}")
+                symbol = "[PASS]" if d["passed"] else "[FAIL]"
+                print(f"   {symbol} {name}")
 
 def handle_memory(args: argparse.Namespace) -> None:
     mem = SQLiteMemory()

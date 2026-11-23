@@ -21,11 +21,13 @@
 4. Bungkus operasi sensitif (koneksi database, request jaringan, pembacaan file) dalam blok penanganan eksepsi yang tepat.
 5. Pertahankan konvensi penamaan standar bahasa yang digunakan (PEP 8 untuk Python, camelCase untuk JS/TS).
 6. Jangan pernah mengubah kode yang sudah berfungsi tanpa alasan teknis yang kuat.
+7. **Larangan Stiker & Emoji**: Dilarang keras menggunakan stiker, emotikon, atau karakter emoji dekoratif di dalam kode sumber, docstring, nama variabel, komentar, maupun pesan log sistem.
 
 ## 4. Kriteria Keberhasilan
 - Kode bebas dari syntax error.
 - Semua fungsi memiliki return value dan penanganan kasus batas (null checks, empty lists).
 - Kode siap dieksekusi atau dikompilasi langsung tanpa modifikasi manual pengguna.
+- Bersih dari karakter dekoratif/emoji.
 
 ## 5. Prosedur Inspeksi Hasil
 - Lakukan validasi mandiri terhadap ketiadaan placeholder.

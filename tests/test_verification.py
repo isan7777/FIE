@@ -58,5 +58,16 @@ class TestVerificationEngine(unittest.TestCase):
         res_bad = self.verifier.verify_text_deliverable(bad_text)
         self.assertTrue(len(res_bad["warnings"]) > 0 or len(res_bad["issues"]) > 0)
 
+    def test_emoji_sticker_detection(self):
+        code_with_emoji = "def greet():\n    # Hello world 🚀\n    return 'ok'"
+        res = self.verifier.verify_python_code(code_with_emoji)
+        has_emoji_warning = any("[STYLE_POLICY]" in w for w in res["warnings"])
+        self.assertTrue(has_emoji_warning)
+
+        text_with_emoji = "Laporan Performa Sistem: Semua modul berjalan dengan baik 👍"
+        res_text = self.verifier.verify_text_deliverable(text_with_emoji)
+        has_text_emoji = any("[STYLE_POLICY]" in w for w in res_text["warnings"])
+        self.assertTrue(has_text_emoji)
+
 if __name__ == "__main__":
     unittest.main()

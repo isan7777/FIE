@@ -19,11 +19,13 @@
 3. Hindari frasa klise AI mekanis (seperti "Dalam lanskap digital saat ini...", "Menyelami lebih dalam...", dsb.).
 4. Format blok kode dengan syntax highlighting yang tepat dan tautan referensi yang valid.
 5. Pastikan istilah teknis konsisten di seluruh bagian dokumen.
+6. **Larangan Stiker & Emoji**: Dilarang keras menggunakan stiker atau emoji dekoratif di dalam dokumentasi, judul bab, maupun teks naratif. Gunakan tipografi baku, penomoran terstruktur, dan pemformatan Markdown murni.
 
 ## 4. Kriteria Keberhasilan
 - Bebas dari kesalahan tata bahasa dan tipografi.
 - Struktur hierarki heading logis (H1 -> H2 -> H3).
 - Panduan teknis dapat diikuti langkah demi langkah oleh pembaca tanpa kebingungan.
+- Bebas dari polusi emoji atau stiker.
 
 ## 5. Prosedur Inspeksi Hasil
 - Lakukan peninjauan alur baca (*flow check*).

@@ -5,6 +5,17 @@ All notable changes to the Frontier Intelligence Engine project will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-11-24
+
+### Added
+- **Zero Emoji / Sticker Invariant**:
+  - Enforced strict prohibition against emojis, emoticons, and decorative stickers across all code, docstrings, identifiers, logs, terminal outputs, and technical documentation.
+  - Added AST and text regex verification in `VerificationEngine` to automatically detect and flag emoji pollution under `[STYLE_POLICY]`.
+  - Added test case `test_emoji_sticker_detection` in `tests/test_verification.py`.
+- **CLI & Benchmark Sanitization**:
+  - Replaced symbol indicators with clean, standard tags (`[PASS]`, `[FAIL]`).
+  - Added `formatting.allow_emojis: false` in `config/settings.yaml`.
+
 ## [1.0.0] - 2026-11-24
 
 ### Added

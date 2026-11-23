@@ -25,3 +25,8 @@ Kode yang dihasilkan oleh FIE wajib memenuhi standar produksi industri terlepas 
 - Nama variabel harus mendeskripsikan isi secara jelas (`user_account_id` alih-alih `uacc`).
 - Fungsi harus berupa kata kerja yang menjelaskan aksi (`validate_token()`, `fetch_project_by_id()`).
 - Konstanta ditulis dalam `UPPER_SNAKE_CASE`.
+
+## 4. Kebijakan Bebas Stiker & Emoji (Zero Emoji / Sticker Invariant)
+- **Larangan Penuh di Kode Sumber**: Dilarang menggunakan karakter emoji Unicode di dalam string komentar kode, docstrings, pesan exception, maupun nama identifier.
+- **Larangan di Terminal & Output Sistem**: Log aplikasi dan keluaran CLI harus menggunakan teks penanda murni (contoh: `[INFO]`, `[SUCCESS]`, `[WARN]`, `[ERROR]`, `[PASS]`, `[FAIL]`) tanpa simbol emoji.
+- **Larangan di Dokumentasi Teknis**: Dokumen spesifikasi teknis dan panduan harus disajikan dengan gaya editorial baku tanpa hiasan stiker visual.

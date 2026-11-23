@@ -29,6 +29,12 @@ class VerificationEngine:
         (r"raise\s+NotImplementedError", "Unimplemented method detected.")
     ]
 
+    # Regex pattern to detect emojis and decorative sticker characters
+    EMOJI_PATTERN = re.compile(
+        r"[\U00010000-\U0010ffff\u2600-\u26ff\u2700-\u27bf\u2300-\u23ff\u2b50-\u2b55\ufe0f]",
+        flags=re.UNICODE
+    )
+
     def verify_python_code(self, code_str: str, run_test: bool = False, test_code: Optional[str] = None) -> Dict[str, Any]:
         """
         Validates Python code for syntax, completeness, security, and optional runtime execution.
@@ -59,6 +65,10 @@ class VerificationEngine:
         for pattern, msg in self.STUB_PATTERNS:
             if re.search(pattern, code_str, re.IGNORECASE):
                 warnings.append(f"[STUB] {msg}")
+
+        # Check for emojis/stickers in code
+        if self.EMOJI_PATTERN.search(code_str):
+            warnings.append("[STYLE_POLICY] Emoji/sticker detected in code. Use clean professional text.")
 
         # Check for empty functions with only 'pass'
         for node in ast.walk(tree):
@@ -121,6 +131,10 @@ class VerificationEngine:
         placeholders = re.findall(r"\{[A-Z_]{3,}\}", text)
         if placeholders:
             warnings.append(f"Unresolved template placeholders detected: {', '.join(set(placeholders))}")
+
+        # Check for emojis/stickers in text
+        if self.EMOJI_PATTERN.search(text):
+            warnings.append("[STYLE_POLICY] Emoji/sticker detected in deliverable. Use clean editorial text.")
 
         # Check required keywords
         if required_keywords:
