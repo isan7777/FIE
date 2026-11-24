@@ -3,7 +3,7 @@ Frontier Intelligence Engine (FIE)
 One Framework. Universal Capabilities. Engineered for Execution.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "Frontier Intelligence Engine Team"
 
 from fie.config import FIEConfig
@@ -12,6 +12,9 @@ from fie.core.loader import ModularPromptLoader
 from fie.core.adaptive import AdaptiveModelEngine
 from fie.core.orchestrator import MasterOrchestrator
 from fie.verification.engine import VerificationEngine
+from fie.tools.builtin import ToolRegistry
+from fie.evaluation.runner import BenchmarkRunner
+from fie.api.gemini_client import GeminiClient
 
 __all__ = [
     "FIEConfig",
@@ -20,4 +23,7 @@ __all__ = [
     "AdaptiveModelEngine",
     "MasterOrchestrator",
     "VerificationEngine",
+    "ToolRegistry",
+    "BenchmarkRunner",
+    "GeminiClient",
 ]

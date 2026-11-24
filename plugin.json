@@ -1,0 +1,18 @@
+{
+  "name": "fie",
+  "displayName": "Frontier Intelligence Engine (FIE)",
+  "version": "1.1.0",
+  "description": "Universal AI Framework for High-Precision Software Engineering, Adaptive Multi-Agent Orchestration, Persistent SQLite Memory, and Self-Verification across all Gemini model tiers.",
+  "author": {
+    "name": "Frontier Intelligence Engine Team",
+    "url": "https://github.com/isan7777/FIE"
+  },
+  "homepage": "https://github.com/isan7777/FIE",
+  "repository": "https://github.com/isan7777/FIE",
+  "license": "MIT",
+  "suggestedPrompts": [
+    "Aktifkan Frontier Intelligence Engine untuk merancang arsitektur sistem ini.",
+    "Gunakan FIE Coder dan Tester untuk mengimplementasikan dan memverifikasi fitur ini.",
+    "Jalankan FIE Root Cause Debugger untuk menginvestigasi error ini."
+  ]
+}

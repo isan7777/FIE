@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "frontier-intelligence-engine"
+version = "1.1.0"
+description = "Universal adaptive multi-agent AI framework for high-precision software engineering, research, and complex problem-solving across all Gemini tiers."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Frontier Intelligence Engine Team" }
+]
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+gemini = [
+    "google-genai>=0.1.0",
+]
+
+[project.scripts]
+fie = "fie.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["fie*"]

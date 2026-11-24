@@ -1,21 +1,30 @@
 """
 SQLite External Memory Engine for Frontier Intelligence Engine (FIE).
-Provides structured, persistent storage for sessions, task execution ledgers,
-and key-value project facts with relevance-based keyword retrieval.
+Provides structured, persistent storage for sessions, conversation messages,
+task execution ledgers, and key-value project facts with relevance retrieval
+and automatic secret redaction.
 """
 
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Iterator
 import sqlite3
 import json
+import re
 import logging
-import datetime
 from contextlib import contextmanager
 
 logger = logging.getLogger("fie.memory")
 
 class SQLiteMemory:
     """Manages persistent external memory with SQLite backend."""
+
+    SENSITIVE_VALUE_PATTERNS = [
+        re.compile(r"AIza[0-9A-Za-z\-_]{20,}"),
+        re.compile(r"sk-[0-9A-Za-z]{20,}"),
+        re.compile(r"ghp_[0-9A-Za-z]{20,}"),
+        re.compile(r"(?i)(?:bearer\s+)[0-9A-Za-z\-_\.]{20,}"),
+        re.compile(r"(?i)(?:password|passwd|secret|api_key)\s*[:=]\s*['\"]?[^\s'\"]{6,}['\"]?")
+    ]
 
     def __init__(self, db_path: Optional[str] = None) -> None:
         if db_path is None:
@@ -40,7 +49,7 @@ class SQLiteMemory:
         """Initializes tables and indexes idempotently."""
         with self._connection() as conn:
             cursor = conn.cursor()
-            
+
             # Sessions Table
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS fie_sessions (
@@ -50,6 +59,19 @@ class SQLiteMemory:
                 user_preferences TEXT DEFAULT '{}',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """)
+
+            # Conversation Messages Table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS fie_messages (
+                message_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT NOT NULL,
+                role TEXT NOT NULL,
+                agent_name TEXT DEFAULT 'system',
+                content TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(session_id) REFERENCES fie_sessions(session_id)
             );
             """)
 
@@ -85,9 +107,18 @@ class SQLiteMemory:
             """)
 
             # Indexes for high-speed queries
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_messages_session ON fie_messages(session_id);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_tasks_session ON fie_tasks(session_id);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_facts_session ON fie_project_facts(session_id, category);")
             conn.commit()
+
+    @classmethod
+    def redact_sensitive_text(cls, value: str) -> str:
+        """Redacts raw API keys, tokens, or password assignments before persistence."""
+        redacted = value
+        for pattern in cls.SENSITIVE_VALUE_PATTERNS:
+            redacted = pattern.sub("[REDACTED_CREDENTIAL]", redacted)
+        return redacted
 
     # ---------------- Session Operations ---------------- #
 
@@ -132,14 +163,55 @@ class SQLiteMemory:
             return [dict(r) for r in cursor.fetchall()]
 
     def clear_session(self, session_id: str) -> bool:
-        """Cleans all tasks and facts belonging to a session."""
+        """Cleans all messages, tasks, and facts belonging to a session."""
         with self._connection() as conn:
             cursor = conn.cursor()
+            cursor.execute("DELETE FROM fie_messages WHERE session_id = ?", (session_id,))
             cursor.execute("DELETE FROM fie_tasks WHERE session_id = ?", (session_id,))
             cursor.execute("DELETE FROM fie_project_facts WHERE session_id = ?", (session_id,))
             cursor.execute("DELETE FROM fie_sessions WHERE session_id = ?", (session_id,))
             conn.commit()
             return True
+
+    # ---------------- Message & Rolling Window Operations ---------------- #
+
+    def record_message(
+        self,
+        session_id: str,
+        role: str,
+        content: str,
+        agent_name: str = "system"
+    ) -> int:
+        """Records a conversation or agent interaction turn with credential redaction."""
+        safe_content = self.redact_sensitive_text(content)
+        with self._connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                INSERT INTO fie_messages (session_id, role, agent_name, content)
+                VALUES (?, ?, ?, ?)
+                """,
+                (session_id, role.lower(), agent_name.lower(), safe_content)
+            )
+            conn.commit()
+            return int(cursor.lastrowid or 0)
+
+    def get_messages(self, session_id: str, limit: int = 20) -> List[Dict[str, Any]]:
+        """Returns the most recent messages for a session in chronological order."""
+        with self._connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT * FROM (
+                    SELECT * FROM fie_messages
+                    WHERE session_id = ?
+                    ORDER BY message_id DESC
+                    LIMIT ?
+                ) ORDER BY message_id ASC
+                """,
+                (session_id, limit)
+            )
+            return [dict(r) for r in cursor.fetchall()]
 
     # ---------------- Task Operations ---------------- #
 
@@ -187,7 +259,8 @@ class SQLiteMemory:
         fact_value: str,
         confidence: float = 1.0
     ) -> None:
-        """Stores a key fact about the project with category and confidence."""
+        """Stores a key fact about the project with automatic credential redaction."""
+        safe_value = self.redact_sensitive_text(fact_value)
         with self._connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
@@ -200,9 +273,18 @@ class SQLiteMemory:
                     confidence = excluded.confidence,
                     created_at = CURRENT_TIMESTAMP;
                 """,
-                (session_id, category.upper(), fact_key, fact_value, confidence)
+                (session_id, category.upper(), fact_key, safe_value, confidence)
             )
             conn.commit()
+
+    def get_all_facts(self, session_id: str) -> List[Dict[str, Any]]:
+        with self._connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT * FROM fie_project_facts WHERE session_id = ? ORDER BY category ASC, fact_key ASC",
+                (session_id,)
+            )
+            return [dict(r) for r in cursor.fetchall()]
 
     def get_facts_by_category(self, session_id: str, category: str) -> List[Dict[str, Any]]:
         with self._connection() as conn:
@@ -217,7 +299,7 @@ class SQLiteMemory:
         """
         Retrieves facts based on token overlap / relevance search against fact_key and fact_value.
         """
-        tokens = [t.strip().lower() for t in query.split() if len(t.strip()) > 2]
+        tokens = [t.strip().lower() for t in re.split(r"\W+", query) if len(t.strip()) > 2]
         if not tokens:
             with self._connection() as conn:
                 cursor = conn.cursor()
@@ -240,8 +322,8 @@ class SQLiteMemory:
             for token in tokens:
                 if token in text_target:
                     score += 1.0
-                    if token in fact['fact_key'].lower():
-                        score += 1.5 # Higher weight for key match
+                    if token in fact["fact_key"].lower():
+                        score += 1.5
             if score > 0:
                 scored.append((score, fact))
 
@@ -254,11 +336,10 @@ class SQLiteMemory:
         """
         if query:
             facts = self.search_facts(session_id, query, limit=6)
+            if not facts:
+                facts = self.get_all_facts(session_id)[:6]
         else:
-            with self._connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute("SELECT * FROM fie_project_facts WHERE session_id = ? LIMIT 6", (session_id,))
-                facts = [dict(r) for r in cursor.fetchall()]
+            facts = self.get_all_facts(session_id)[:6]
 
         if not facts:
             return "No prior project memory recorded."
@@ -268,3 +349,23 @@ class SQLiteMemory:
             lines.append(f"- [{f['category']}] {f['fact_key']}: {f['fact_value']}")
         lines.append("-----------------------------")
         return "\n".join(lines)
+
+    def export_session(self, session_id: str) -> Dict[str, Any]:
+        """Exports complete session metadata, facts, tasks, and recent messages."""
+        return {
+            "session": self.get_session(session_id),
+            "facts": self.get_all_facts(session_id),
+            "tasks": self.get_tasks_for_session(session_id),
+            "messages": self.get_messages(session_id, limit=50)
+        }
+
+    def get_memory_stats(self) -> Dict[str, int]:
+        """Returns aggregate record counts across all SQLite memory tables."""
+        with self._connection() as conn:
+            cursor = conn.cursor()
+            stats = {}
+            for table in ("fie_sessions", "fie_messages", "fie_tasks", "fie_project_facts"):
+                cursor.execute(f"SELECT COUNT(*) AS cnt FROM {table}")
+                row = cursor.fetchone()
+                stats[table] = int(row["cnt"]) if row else 0
+            return stats
