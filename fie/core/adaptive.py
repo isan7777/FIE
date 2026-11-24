@@ -115,15 +115,21 @@ class AdaptiveModelEngine:
         cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
 
         if profile.prompt_compression_level == "high":
-            # For small models: Strip verbose explanations and keep action items
+            # For small models: Strip verbose explanations, blockquotes, and examples, keeping action items
             lines = []
             for line in cleaned.splitlines():
                 stripped = line.strip()
-                # Skip decorative banners or lines that add no imperative value
-                if stripped.startswith("---") and len(stripped) > 5:
+                if not stripped:
                     continue
-                lines.append(line)
+                if stripped.startswith("---") and len(stripped) >= 3:
+                    continue
+                if stripped.startswith(">") or stripped.startswith("- Contoh"):
+                    continue
+                lines.append(stripped)
             cleaned = "\n".join(lines)
+            max_chars = int(profile.max_instruction_tokens * 3.5)
+            if len(cleaned) > max_chars:
+                cleaned = cleaned[:max_chars].rsplit("\n", 1)[0]
 
         return cleaned.strip()
 
